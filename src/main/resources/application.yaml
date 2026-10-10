@@ -1,0 +1,27 @@
+server:
+  port: ${API_PORT:8081}
+  servlet:
+    session:
+      cookie:
+        name: JSESSIONID
+spring:
+  application:
+    name: kairos-api-mongodb
+  config:
+    import: ${APP_ENV_FILE:optional:file:./.env[.properties]}
+  mongodb:
+    uri: ${MONGODB_URI}
+    database: ${MONGODB_DATABASE:}
+  data:
+    mongodb:
+      auto-index-creation: false
+app:
+  mongodb:
+    verify-on-startup: ${APP_MONGODB_VERIFY_ON_STARTUP:true}
+    writes-enabled: ${APP_MONGODB_WRITES_ENABLED:false}
+  security:
+    api-token: ${API_ACCESS_TOKEN:}
+logging:
+  level:
+    org.mongodb.driver: OFF
+    org.springframework.boot.autoconfigure: INFO
