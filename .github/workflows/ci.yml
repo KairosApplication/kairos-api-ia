@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Detect project files
+        id: project
+        run: |
+          if test -f pom.xml; then
+            echo 'java=true' >> "$GITHUB_OUTPUT"
+          elif test -d src; then
+            echo 'Source directory exists but pom.xml is missing'; exit 1
+          else
+            echo 'java=false' >> "$GITHUB_OUTPUT"
+            echo 'Repository bootstrap: Java code has not been merged yet.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Set up Java 21
+        if: steps.project.outputs.java == 'true'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Compile, test, and package
+        if: steps.project.outputs.java == 'true'
+        run: bash ./mvnw --batch-mode --no-transfer-progress clean verify
+      - name: Upload test reports
+        if: always() && steps.project.outputs.java == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Set up Python for inspection-tool tests
+        if: hashFiles('scripts/test_inspection.py') != ''
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Test MongoDB inspection tooling without database access
+        if: hashFiles('scripts/test_inspection.py') != ''
+        run: |
+          python -m pip install -r scripts/requirements.txt
+          python -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Validate PowerShell syntax without executing launchers
+        if: hashFiles('scripts/*.ps1') != ''
+        shell: pwsh
+        run: |
+          $invalid = $false
+          Get-ChildItem scripts -Filter '*.ps1' -Recurse | ForEach-Object {
+            $tokens = $null
+            $parseErrors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors) | Out-Null
+            if ($parseErrors.Count -gt 0) {
+              $invalid = $true
+              $parseErrors | ForEach-Object { Write-Host $_.Message }
+            }
+          }
+          if ($invalid) { exit 1 }
+
+  analyze:
+    name: Analyze Java
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        if: hashFiles('pom.xml') != ''
+        uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          build-mode: none
+      - name: Analyze Java code
+        if: hashFiles('pom.xml') != ''
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:java-kotlin
+      - name: Explain bootstrap state
+        if: hashFiles('pom.xml') == ''
+        run: echo 'CodeQL will analyze Java when the application is merged; no Java code exists in this snapshot.' >> "$GITHUB_STEP_SUMMARY"
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Scan history for leaked secrets
+        uses: docker://ghcr.io/gitleaks/gitleaks:v8.29.1
+        with:
+          args: detect --source=/github/workspace --redact --no-banner
