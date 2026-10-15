@@ -1,0 +1,993 @@
+{
+  "status": "OK",
+  "database": "kairos_ai",
+  "collections": [
+    {
+      "name": "conversations",
+      "sample_count": 2,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "created_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "messages": {
+          "types": [
+            "list"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "messages[]": {
+          "types": [
+            "dict"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "messages[].content": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "messages[].message_id": {
+          "types": [
+            "ObjectId",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "messages[].sender": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "messages[].timestamp": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "status": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "summarized_count": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 1,
+          "documents_missing": 1
+        },
+        "summary": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 1
+        },
+        "summary_updated_at": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 1
+        },
+        "updated_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "user_id": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "feedback",
+      "sample_count": 5,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 5,
+          "documents_missing": 0
+        },
+        "comment": {
+          "types": [
+            "NoneType",
+            "str"
+          ],
+          "documents_present": 5,
+          "documents_missing": 0
+        },
+        "created_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 5,
+          "documents_missing": 0
+        },
+        "execution_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 5,
+          "documents_missing": 0
+        },
+        "rating": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 5,
+          "documents_missing": 0
+        },
+        "user_id": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 5,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "user_memory",
+      "sample_count": 2,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories": {
+          "types": [
+            "list"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[]": {
+          "types": [
+            "dict"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[].content": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[].created_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[].importance": {
+          "types": [
+            "float",
+            "int"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[].memory_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[].type": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "memories[].updated_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "updated_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "user_id": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "agent_traces",
+      "sample_count": 40,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "agent_name": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "completed_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "estimated_cost_usd": {
+          "types": [
+            "NoneType",
+            "float"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "estimated_tokens": {
+          "types": [
+            "NoneType",
+            "int"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "execution_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "input": {
+          "types": [
+            "dict"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "input.pergunta": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 29,
+          "documents_missing": 11
+        },
+        "input.question": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 38
+        },
+        "input.resposta": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 5,
+          "documents_missing": 35
+        },
+        "input.user_id": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 9,
+          "documents_missing": 31
+        },
+        "latency_ms": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "model": {
+          "types": [
+            "NoneType",
+            "str"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "output": {
+          "types": [
+            "dict"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "output.agents_selected": {
+          "types": [
+            "list"
+          ],
+          "documents_present": 1,
+          "documents_missing": 39
+        },
+        "output.agents_selected[]": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 39
+        },
+        "output.aprovado": {
+          "types": [
+            "bool"
+          ],
+          "documents_present": 5,
+          "documents_missing": 35
+        },
+        "output.bloqueado": {
+          "types": [
+            "bool"
+          ],
+          "documents_present": 9,
+          "documents_missing": 31
+        },
+        "output.categoria": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 9,
+          "documents_missing": 31
+        },
+        "output.conversation_id": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 9,
+          "documents_missing": 31
+        },
+        "output.critical_products": {
+          "types": [
+            "list"
+          ],
+          "documents_present": 1,
+          "documents_missing": 39
+        },
+        "output.critical_products[]": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 39
+        },
+        "output.erro": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 39
+        },
+        "output.memorias_extraidas": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 4,
+          "documents_missing": 36
+        },
+        "output.memorias_usuario": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 9,
+          "documents_missing": 31
+        },
+        "output.mensagens_historico": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 9,
+          "documents_missing": 31
+        },
+        "output.motivo": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 14,
+          "documents_missing": 26
+        },
+        "output.products_found": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 1,
+          "documents_missing": 39
+        },
+        "output.resposta": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 5,
+          "documents_missing": 35
+        },
+        "output.rota": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 5,
+          "documents_missing": 35
+        },
+        "started_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        },
+        "status": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 40,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "guardrail_events",
+      "sample_count": 32,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 32,
+          "documents_missing": 0
+        },
+        "action": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 32,
+          "documents_missing": 0
+        },
+        "category": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 31,
+          "documents_missing": 1
+        },
+        "created_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 32,
+          "documents_missing": 0
+        },
+        "execution_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 32,
+          "documents_missing": 0
+        },
+        "guardrail_type": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 32,
+          "documents_missing": 0
+        },
+        "reason": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 32,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "judge_evaluations",
+      "sample_count": 25,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "created_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "decision": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "execution_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "grounded": {
+          "types": [
+            "bool"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "hallucination_detected": {
+          "types": [
+            "bool"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "judge_agent": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "justification": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        },
+        "score": {
+          "types": [
+            "float"
+          ],
+          "documents_present": 25,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "rag_chunks",
+      "sample_count": 2,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "chunk_index": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "content": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "document_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "embedding": {
+          "types": [
+            "list"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        },
+        "embedding[]": {
+          "types": [
+            "float"
+          ],
+          "documents_present": 2,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "ai_executions",
+      "sample_count": 35,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "agents_used": {
+          "types": [
+            "list"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "agents_used[]": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 28,
+          "documents_missing": 7
+        },
+        "completed_at": {
+          "types": [
+            "NoneType",
+            "datetime",
+            "str"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "conversation_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "estimated_cost_usd": {
+          "types": [
+            "NoneType",
+            "float",
+            "int"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "final_response": {
+          "types": [
+            "NoneType",
+            "str"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "input": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "started_at": {
+          "types": [
+            "datetime",
+            "str"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "status": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "total_latency_ms": {
+          "types": [
+            "NoneType",
+            "int"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        },
+        "user_id": {
+          "types": [
+            "int"
+          ],
+          "documents_present": 35,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    },
+    {
+      "name": "rag_documents",
+      "sample_count": 1,
+      "fields": {
+        "_id": {
+          "types": [
+            "ObjectId"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        },
+        "active": {
+          "types": [
+            "bool"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        },
+        "created_at": {
+          "types": [
+            "datetime"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        },
+        "description": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        },
+        "source_type": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        },
+        "source_url": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        },
+        "title": {
+          "types": [
+            "str"
+          ],
+          "documents_present": 1,
+          "documents_missing": 0
+        }
+      },
+      "indexes": [
+        {
+          "name": "_id_",
+          "fields": [
+            [
+              "_id",
+              1
+            ]
+          ],
+          "unique": true,
+          "sparse": false,
+          "has_partial_filter": false
+        }
+      ],
+      "validator_rules": [
+        {
+          "path": "validator",
+          "keywords": []
+        }
+      ]
+    }
+  ],
+  "inspection_date": "2026-10-10"
+}
