@@ -17,7 +17,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/**").hasRole("API_ADMIN").anyRequest().denyAll())
                 .addFilterBefore(new ApiTokenFilter(token),AnonymousAuthenticationFilter.class)
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(AbstractHttpConfigurer::disable).httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(csrf->csrf.ignoringRequestMatchers("/api/v1/**")).httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable).logout(AbstractHttpConfigurer::disable)
                 .exceptionHandling(errors->errors.authenticationEntryPoint((request,response,failure)->{
                     response.setStatus(401); response.setContentType("application/json");
