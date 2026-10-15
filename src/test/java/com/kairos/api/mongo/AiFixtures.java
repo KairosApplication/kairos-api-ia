@@ -21,6 +21,19 @@ public final class AiFixtures {
             case RAG_DOCUMENT -> Map.of("title","synthetic","description","test","sourceType","WEB","sourceUrl","https://example.invalid","active",false);
         };
     }
+    public static Map<String,Object> patch(AiResource resource) {
+        return switch(resource) {
+            case CONVERSATION -> Map.of("status","CLOSED");
+            case FEEDBACK -> Map.of("rating",4);
+            case USER_MEMORY -> Map.of("userId",2);
+            case AGENT_TRACE -> Map.of("input",Map.of("prompt","updated"));
+            case GUARDRAIL_EVENT -> Map.of("reason","updated");
+            case JUDGE_EVALUATION -> Map.of("justification","updated");
+            case RAG_CHUNK -> Map.of("content","updated");
+            case AI_EXECUTION -> Map.of("status","COMPLETED");
+            case RAG_DOCUMENT -> Map.of("title","updated");
+        };
+    }
     public static AiResponseMapper mapper() throws Exception {
         var conversions=MongoCustomConversions.create(adapter->{});
         var context=new MongoMappingContext();context.setSimpleTypeHolder(conversions.getSimpleTypeHolder());context.afterPropertiesSet();

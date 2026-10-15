@@ -47,13 +47,30 @@ class AiHttpIntegrationTest {
         var document=inserted.getValue();var objectId=document.getObjectId("_id");
         when(repository.find(resource,objectId)).thenReturn(document);
         http.perform(get(base+"/"+id).header("Authorization",AUTH)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(id));
-        var body=AiFixtures.body(resource);String field=body.keySet().stream().filter(f->!f.endsWith("Id")).findFirst().orElse("userId");
+        var patch=AiFixtures.patch(resource);
         when(repository.patch(eq(resource),eq(objectId),anyMap())).thenReturn(document);
         http.perform(patch(base+"/"+id).header("Authorization",AUTH).contentType("application/json")
-                .content(json.writeValueAsString(Map.of(field,body.get(field)))))
+                .content(json.writeValueAsString(patch)))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(id));
+        var updates=org.mockito.ArgumentCaptor.forClass(Map.class);
+        verify(repository).patch(eq(resource),eq(objectId),updates.capture());
+        patch.forEach((field,value)->{
+            String stored=resource.storedField(field);
+            if (value instanceof Map<?,?> nested) nested.forEach((key,item)->
+                    Assertions.assertEquals(item,updates.getValue().get(stored+"."+key)));
+            else Assertions.assertEquals(value,updates.getValue().get(stored));
+        });
         when(repository.delete(resource,objectId)).thenReturn(document);
         http.perform(delete(base+"/"+id).header("Authorization",AUTH)).andExpect(status().isNoContent());
+    }
+    @Test void rejectsPatchesWithoutEffectiveChanges() throws Exception {
+        for (var patch:List.of(Map.of(),Map.of("input",Map.of()),Map.of("output",Map.of()))) {
+            http.perform(patch("/api/v1/agent-traces/"+AiFixtures.REF.toHexString())
+                    .header("Authorization",AUTH).contentType("application/json")
+                    .content(json.writeValueAsString(patch)))
+                    .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+        }
+        verify(repository,never()).patch(any(),any(),anyMap());
     }
     @Test void protectsBusinessDataWithBearerAndDoesNotLeakToken() throws Exception {
         http.perform(get("/api/v1/conversations")).andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
