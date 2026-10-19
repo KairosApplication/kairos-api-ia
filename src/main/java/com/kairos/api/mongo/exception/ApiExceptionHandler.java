@@ -18,4 +18,8 @@ public class ApiExceptionHandler {
     ResponseEntity<ApiError> persistenceFailure(DataAccessException error) {
         return ResponseEntity.status(503).body(new ApiError("DATABASE_UNAVAILABLE","Database operation unavailable."));
     }
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    ResponseEntity<ApiError> validationFailure(Exception error) {
+        return ResponseEntity.badRequest().body(new ApiError("INVALID_REQUEST","Invalid operation fields."));
+    }
 }

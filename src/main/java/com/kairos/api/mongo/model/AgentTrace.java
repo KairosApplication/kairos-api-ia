@@ -17,5 +17,8 @@ public record AgentTrace(@Id ObjectId id,
     @Field("status") String status,
     @Field("model") String model,
     @Field("estimated_tokens") Integer estimatedTokens,
-    @Field("estimated_cost_usd") Double estimatedCostUsd
+    @Field("estimated_cost_usd") Double estimatedCostUsd,
+    @Field("langsmith_run_id") String langsmithRunId,
+    @Field("prompt_tokens") Integer promptTokens,
+    @Field("completion_tokens") Integer completionTokens
 ) { }
