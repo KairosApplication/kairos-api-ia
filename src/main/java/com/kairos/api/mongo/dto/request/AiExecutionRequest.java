@@ -14,5 +14,7 @@ public record AiExecutionRequest(
      Instant completedAt,
      String finalResponse,
     @PositiveOrZero Integer totalLatencyMs,
-    @PositiveOrZero Double estimatedCostUsd
+    @PositiveOrZero Double estimatedCostUsd,
+    @PositiveOrZero Double knownCostUsd,
+    Boolean costComplete
 ) { }

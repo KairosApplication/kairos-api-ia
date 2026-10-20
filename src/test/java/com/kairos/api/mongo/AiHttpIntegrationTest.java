@@ -2,6 +2,7 @@ package com.kairos.api.mongo;
 import com.kairos.api.mongo.model.AiResource;
 import com.kairos.api.mongo.repository.AiDocumentRepository;
 import com.kairos.api.mongo.service.MongoHealthService;
+import com.kairos.api.mongo.service.ChatPersistenceService;
 import org.bson.Document;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,6 +29,7 @@ class AiHttpIntegrationTest {
     @Autowired ObjectMapper json;
     @MockitoBean AiDocumentRepository repository;
     @MockitoBean MongoHealthService health;
+    @MockitoBean ChatPersistenceService runtime;
     MockMvc http;
     @BeforeEach void setup() {
         http=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
@@ -90,5 +92,28 @@ class AiHttpIntegrationTest {
         when(repository.list(any(),anyMap(),anyInt(),anyInt())).thenThrow(new org.springframework.dao.DataAccessResourceFailureException("private-uri-and-password"));
         http.perform(get("/api/v1/conversations").header("Authorization",AUTH)).andExpect(status().isServiceUnavailable())
                 .andExpect(content().json("{\"code\":\"DATABASE_UNAVAILABLE\",\"message\":\"Database operation unavailable.\"}"));
+    }
+    @Test void runtimeRoutesRequireBearerValidateBodiesAndForwardLease() throws Exception {
+        String route="/api/v1/runtime/users/1/conversations/"+AiFixtures.REF.toHexString()+"/turns";
+        http.perform(post(route).contentType("application/json").content("{}"))
+                .andExpect(status().isUnauthorized());
+        http.perform(post(route).header("Authorization",AUTH).contentType("application/json").content("{}"))
+                .andExpect(status().isBadRequest());
+        http.perform(post(route).header("Authorization",AUTH).header("X-Chat-Lease","request-1").contentType("application/json")
+                .content("{\"turnId\":\"request-1\",\"question\":\"Q\",\"answer\":\"A\"}"))
+                .andExpect(status().isOk());
+        verify(runtime).appendTurn(eq(1),eq(AiFixtures.REF.toHexString()),
+                eq(new com.kairos.api.mongo.dto.request.RuntimeRequests.Turn("request-1","Q","A")),eq("request-1"));
+    }
+    @Test void acceptsUnknownJudgeFactsAndNewMetricFields() throws Exception {
+        var judge=new HashMap<String,Object>(AiFixtures.body(AiResource.JUDGE_EVALUATION));
+        judge.put("grounded",null);judge.put("hallucinationDetected",null);
+        http.perform(post("/api/v1/judge-evaluations").header("Authorization",AUTH).contentType("application/json")
+                .content(json.writeValueAsString(judge))).andExpect(status().isCreated());
+        var trace=new HashMap<String,Object>(AiFixtures.body(AiResource.AGENT_TRACE));
+        trace.put("langsmithRunId","run-example");trace.put("promptTokens",12);trace.put("completionTokens",5);
+        http.perform(post("/api/v1/agent-traces").header("Authorization",AUTH).contentType("application/json")
+                .content(json.writeValueAsString(trace))).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.promptTokens").value(12)).andExpect(jsonPath("$.langsmithRunId").value("run-example"));
     }
 }

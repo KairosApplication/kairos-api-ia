@@ -1,6 +1,6 @@
 param(
     [string]$EnvFile = (Join-Path $env:USERPROFILE 'Downloads/atlas-credentials.env'),
-    [string]$Database = 'kairos_ai',
+    [string]$Database,
     [switch]$PromptUri,
     [switch]$PromptToken,
     [switch]$ResolveSrv

@@ -15,5 +15,8 @@ public record AgentTraceRequest(
     @NotNull(groups=OnCreate.class) @Pattern(regexp="(?s).*\\S.*") String status,
      String model,
     @PositiveOrZero Integer estimatedTokens,
-    @PositiveOrZero Double estimatedCostUsd
+    @PositiveOrZero Double estimatedCostUsd,
+    String langsmithRunId,
+    @PositiveOrZero Integer promptTokens,
+    @PositiveOrZero Integer completionTokens
 ) { }

@@ -16,5 +16,7 @@ public record AiExecution(@Id ObjectId id,
     @Field("completed_at") Object completedAt,
     @Field("final_response") String finalResponse,
     @Field("total_latency_ms") Integer totalLatencyMs,
-    @Field("estimated_cost_usd") Double estimatedCostUsd
+    @Field("estimated_cost_usd") Double estimatedCostUsd,
+    @Field("known_cost_usd") Double knownCostUsd,
+    @Field("cost_complete") Boolean costComplete
 ) { }
