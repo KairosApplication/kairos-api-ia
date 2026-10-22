@@ -14,5 +14,6 @@ public record Conversation(@Id ObjectId id,
     @Field("summarized_count") Integer summarizedCount,
     @Field("created_at") Object createdAt,
     @Field("updated_at") Object updatedAt,
+    @Field("access_scope") String accessScope,
     @Field("summary_updated_at") Object summaryUpdatedAt
 ) { }

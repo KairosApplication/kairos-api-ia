@@ -107,7 +107,7 @@ public class ChatPersistenceService {
         var id=existing==null ? new ObjectId("ffffffffffffffff"+String.format("%08x",userId)) : existing.getObjectId("_id");
         var now=new Date();
         var entries=request.memories().stream().map(m->new Document("memory_id",m.memoryId()==null?new ObjectId():AiResourceService.id(m.memoryId()))
-                .append("type",m.type()).append("content",m.content()).append("importance",m.importance())
+                .append("access_scope",m.accessScope()).append("type",m.type()).append("content",m.content()).append("importance",m.importance())
                 .append("created_at",m.createdAt()==null?now:Date.from(m.createdAt()))
                 .append("updated_at",m.updatedAt()==null?now:Date.from(m.updatedAt()))).toList();
         var query=Query.query(Criteria.where("_id").is(id).and("user_id").is(userId));

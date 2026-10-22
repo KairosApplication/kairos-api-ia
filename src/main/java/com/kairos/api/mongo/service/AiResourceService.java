@@ -34,11 +34,13 @@ public class AiResourceService {
         int page=integer(filters.remove("page"),0,0,10000),size=integer(filters.remove("size"),20,1,100);
         Map<String,Object> query=new LinkedHashMap<>();
         filters.forEach((field,value)->{
-            if (!resource.hasField(field) || !Set.of("userId","conversationId","executionId","documentId","status","active").contains(field)) {
+            if (!resource.hasField(field) || !Set.of("userId","conversationId","executionId","documentId","status","active","accessScope").contains(field)) {
                 throw ApiException.badRequest("Unsupported filter for this resource.");
             }
             Object converted=value;
-            if (field.equals("userId")) {
+            if (field.equals("accessScope")) {
+                if (!value.matches("[a-f0-9]{64}")) throw ApiException.badRequest("Invalid accessScope.");
+            } else if (field.equals("userId")) {
                 try { int user=Integer.parseInt(value);if (user<=0) throw new NumberFormatException();converted=user; }
                 catch (NumberFormatException failure) { throw ApiException.badRequest("Invalid userId."); }
             } else if (field.endsWith("Id")) converted=id(value);

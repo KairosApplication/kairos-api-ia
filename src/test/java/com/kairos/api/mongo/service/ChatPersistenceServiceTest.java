@@ -87,9 +87,11 @@ class ChatPersistenceServiceTest {
     @Test void appendsMemoriesWithStableUpsertAndPreservesExistingArray() {
         var stored=new Document("_id",id).append("user_id",7).append("memories",List.of());
         when(mongo.findAndModify(any(Query.class),any(Update.class),any(FindAndModifyOptions.class),eq(Document.class),eq("user_memory"))).thenReturn(stored);
-        service.appendMemories(7,new Memories(List.of(new com.kairos.api.mongo.dto.request.MemoryRequest(null,"fato","Conteúdo",3.0,null,null))));
+        service.appendMemories(7,new Memories(List.of(new com.kairos.api.mongo.dto.request.MemoryRequest(null,"fato","Conteúdo",3.0,null,null,"a".repeat(64)))));
         var query=ArgumentCaptor.forClass(Query.class);var update=ArgumentCaptor.forClass(Update.class);
         verify(mongo).findAndModify(query.capture(),update.capture(),any(FindAndModifyOptions.class),eq(Document.class),eq("user_memory"));
+        assertTrue(update.getValue().toString().contains("access_scope"));
+        assertTrue(update.getValue().toString().contains("a".repeat(64)));
         assertEquals(new ObjectId("ffffffffffffffff00000007"),query.getValue().getQueryObject().get("_id"));
         assertTrue(update.getValue().getUpdateObject().containsKey("$push"));
         assertFalse(update.getValue().getUpdateObject().get("$set",Document.class).containsKey("memories"));
