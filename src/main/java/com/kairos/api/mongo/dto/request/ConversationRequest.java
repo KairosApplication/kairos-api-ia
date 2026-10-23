@@ -12,5 +12,6 @@ public record ConversationRequest(
     @PositiveOrZero Integer summarizedCount,
      Instant createdAt,
      Instant updatedAt,
+    @Pattern(regexp="[a-f0-9]{64}") String accessScope,
      Instant summaryUpdatedAt
 ) { }

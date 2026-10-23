@@ -86,6 +86,19 @@ class AiResourceServiceTest {
         assertThrows(ApiException.class,()->service.list(AiResource.CONVERSATION,Map.of("size","101")));
         assertThrows(ApiException.class,()->service.list(AiResource.RAG_DOCUMENT,Map.of("userId","1")));
     }
+    @Test void persistsScopeAndFiltersConversationListByUserAndScope() {
+        String scope="a".repeat(64);
+        var body=new HashMap<String,Object>(AiFixtures.body(AiResource.CONVERSATION));
+        body.put("accessScope",scope);
+        assertEquals(scope,service.create(AiResource.CONVERSATION,body).data().get("accessScope"));
+        when(repository.list(eq(AiResource.CONVERSATION),anyMap(),eq(0),eq(20))).thenReturn(List.of());
+        service.list(AiResource.CONVERSATION,Map.of("userId","7","accessScope",scope));
+        verify(repository).list(AiResource.CONVERSATION,Map.of("user_id",7,"access_scope",scope),0,20);
+        assertThrows(ApiException.class,()->service.list(AiResource.CONVERSATION,Map.of("accessScope","invalid")));
+        assertThrows(ApiException.class,()->service.create(AiResource.CONVERSATION,
+                Map.of("userId",7,"status","ACTIVE","accessScope","invalid")));
+    }
+
     @Test void mapsEmbeddedMemoryAndMixedMessageIdentifiers() {
         var body=new HashMap<String,Object>(AiFixtures.body(AiResource.CONVERSATION));
         body.put("messages",List.of(Map.of("sender","USER","content","synthetic","messageId","external-message"),Map.of("sender","AI","content","synthetic")));
