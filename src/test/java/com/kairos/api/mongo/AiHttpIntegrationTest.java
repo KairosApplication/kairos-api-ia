@@ -116,4 +116,18 @@ class AiHttpIntegrationTest {
                 .content(json.writeValueAsString(trace))).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.promptTokens").value(12)).andExpect(jsonPath("$.langsmithRunId").value("run-example"));
     }
+    @Test void runtimeSourcesAcceptOnlyPublicCategories() throws Exception {
+        String route="/api/v1/runtime/users/1/conversations/"+AiFixtures.REF.toHexString()+"/turns";
+        var body=new HashMap<String,Object>(Map.of("turnId","source-turn","question","Q","answer","A"));
+        body.put("sources",List.of("pdf","database","memory"));
+        http.perform(post(route).header("Authorization",AUTH).contentType("application/json").content(json.writeValueAsString(body)))
+                .andExpect(status().isOk());
+        verify(runtime).appendTurn(eq(1),eq(AiFixtures.REF.toHexString()),
+                eq(new com.kairos.api.mongo.dto.request.RuntimeRequests.Turn("source-turn","Q","A",List.of("pdf","database","memory"))),isNull());
+        body.put("sources",List.of("private_collection"));
+        http.perform(post(route).header("Authorization",AUTH).contentType("application/json").content(json.writeValueAsString(body)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("private_collection"))));
+        verify(runtime,times(1)).appendTurn(anyInt(),anyString(),any(),any());
+    }
 }

@@ -67,7 +67,8 @@ public class ChatPersistenceService {
         var aiMessageId=turn.turnId()+":AI";
         var now=new Date();
         var messages=List.of(new Document("message_id",userMessageId).append("sender","USER").append("content",turn.question()).append("timestamp",now),
-                new Document("message_id",aiMessageId).append("sender","AI").append("content",turn.answer()).append("timestamp",now));
+                new Document("message_id",aiMessageId).append("sender","AI").append("content",turn.answer()).append("timestamp",now)
+                        .append("sources",turn.sources()==null ? List.of() : turn.sources().stream().distinct().toList()));
         var query=Query.query(owned(userId,id).and("status").is("ACTIVE").and("messages.message_id").nin(userMessageId,aiMessageId));
         leaseScope(query,leaseOwner);
         var updated=mongo.findAndModify(query,new Update().push("messages").each(messages.toArray()).set("updated_at",now),
@@ -76,7 +77,9 @@ public class ChatPersistenceService {
             var current=conversation(userId,id);
             var stored=current.getList("messages",Document.class,List.of());
             boolean duplicate=messages.stream().allMatch(expected->stored.stream().anyMatch(m->
-                    Objects.equals(m.get("message_id"),expected.get("message_id")) && Objects.equals(m.get("content"),expected.get("content"))));
+                    Objects.equals(m.get("message_id"),expected.get("message_id")) && Objects.equals(m.get("content"),expected.get("content"))
+                    && Objects.equals(Optional.ofNullable(m.get("sources")).orElse(List.of()),
+                                      Optional.ofNullable(expected.get("sources")).orElse(List.of()))));
             if (!duplicate) throw ApiException.conflict("Turn conflicts with the current conversation.");
             updated=current;
         }
