@@ -43,6 +43,27 @@ class ChatPersistenceServiceTest {
         assertEquals(id.toHexString(),service.appendTurn(7,id.toHexString(),new Turn("r","Q","A"),null).id());
         assertThrows(ApiException.class,()->service.appendTurn(7,id.toHexString(),new Turn("r","Changed","A"),null));
     }
+    @Test void storesSourcesOnlyOnAssistantMessageAndChecksIdempotentMetadata() {
+        when(mongo.findAndModify(any(Query.class),any(Update.class),any(FindAndModifyOptions.class),eq(Document.class),eq("conversations")))
+                .thenAnswer(call -> {
+                    var update=call.<Update>getArgument(1).getUpdateObject();
+                    var modifiers=(Update.Modifiers)update.get("$push",Document.class).get("messages");
+                    var each=modifiers.getModifiers().stream().filter(modifier->modifier.getKey().equals("$each")).findFirst().orElseThrow().getValue();
+                    var messages=each instanceof List<?> list ? list : Arrays.asList((Object[])each);
+                    assertFalse(((Document)messages.get(0)).containsKey("sources"));
+                    assertEquals(List.of("pdf","memory"),((Document)messages.get(1)).get("sources"));
+                    return conversation();
+                });
+        service.appendTurn(7,id.toHexString(),new Turn("r","Q","A",List.of("pdf","memory","pdf")),null);
+        reset(mongo);
+        when(mongo.collectionExists(anyString())).thenReturn(true);
+        var stored=conversation();
+        stored.put("messages",List.of(new Document("message_id","r:USER").append("content","Q"),
+                new Document("message_id","r:AI").append("content","A").append("sources",List.of("pdf"))));
+        when(mongo.findOne(any(Query.class),eq(Document.class),eq("conversations"))).thenReturn(stored);
+        assertEquals(409,assertThrows(ApiException.class,()->service.appendTurn(7,id.toHexString(),
+                new Turn("r","Q","A",List.of("database")),null)).status.value());
+    }
     @Test void summaryUsesPreviousVersionAndDoesNotOvershootHistory() {
         when(mongo.findAndModify(any(Query.class),any(Update.class),any(FindAndModifyOptions.class),eq(Document.class),eq("conversations"))).thenReturn(conversation());
         service.summarize(7,id.toHexString(),new Summary("summary",null,0,4),null);

@@ -8,6 +8,15 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 class AiResponseMapperTest {
+    @Test void preservesPublicSourcesOnSavedMessagesWithoutExposingOtherMetadata() throws Exception {
+        var document=new Document("_id",new ObjectId()).append("user_id",1).append("status","ACTIVE")
+                .append("messages",List.of(new Document("sender","AI").append("content","Answer")
+                        .append("sources",List.of("pdf","memory")).append("internal_collection","private")));
+        var response=AiFixtures.mapper().response(AiResource.CONVERSATION,document);
+        var message=(Map<?,?>)((List<?>)response.data().get("messages")).getFirst();
+        assertEquals(List.of("pdf","memory"),message.get("sources"));
+        assertFalse(message.containsKey("internal_collection"));
+    }
     @Test void readsMixedDatesMissingFieldsAndPolymorphicEmbeddedIdsWithoutChangingBson() throws Exception {
         var id=new ObjectId();var bsonId=new ObjectId();var date=Date.from(Instant.parse("2026-10-10T10:00:00Z"));
         var document=new Document("_id",id).append("user_id",1).append("status","ACTIVE").append("created_at",date)

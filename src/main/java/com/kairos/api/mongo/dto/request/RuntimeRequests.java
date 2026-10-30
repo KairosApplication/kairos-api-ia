@@ -9,7 +9,10 @@ public final class RuntimeRequests {
     private RuntimeRequests() { }
     public record Turn(@NotBlank @Size(max=64) String turnId,
                        @NotBlank @Size(max=200000) String question,
-                       @NotBlank @Size(max=200000) String answer) { }
+                       @NotBlank @Size(max=200000) String answer,
+                       @Size(max=3) List<@NotNull @Pattern(regexp="pdf|database|memory") String> sources) {
+        public Turn(String turnId, String question, String answer) { this(turnId, question, answer, null); }
+    }
     public record Summary(@NotBlank @Size(max=200000) String summary,
                           @Size(max=200000) String previousSummary,
                           @NotNull @PositiveOrZero Integer previousCount,
