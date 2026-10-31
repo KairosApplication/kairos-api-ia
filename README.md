@@ -105,3 +105,12 @@ python scripts/inspect_mongodb.py --database kairos_ai
 ```
 
 O script usa o mesmo arquivo externo, aceita URI exportada no processo, examina até 40 documentos por collection e mostra campos/tipos/ocorrências, sem valores de documentos. Veja [docs/MONGODB_SCHEMA.json](docs/MONGODB_SCHEMA.json), [MIGRATION_REPORT.md](MIGRATION_REPORT.md) e [docs/VALIDATION.md](docs/VALIDATION.md).
+
+<!-- docs-bot:start -->
+## Documentação
+
+- [Contratos de dados de IA](docs/API_CONTRACTS.md)
+- [Contratos da API PostgreSQL de referência](docs/REFERENCE_CONTRACTS.md)
+- [Evidências de validação](docs/VALIDATION.md)
+- [CI e ruleset Kairos](docs/ci-governance.md)
+<!-- docs-bot:end -->
